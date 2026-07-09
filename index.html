@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Bilal Ur Rehman — AI Platform Engineer · The Wonder World</title>
+<meta name="description" content="Bilal Ur Rehman — AI Platform Engineer. A 3D scroll journey through LLM gateways, agentic systems and governed code, guided by a husky." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Nunito+Sans:wght@400;600;700&family=Caveat:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+/* ============================================================
+   THE WONDER WORLD · 3D — design tokens
+   sky: deep indigo twilight, aurora teal/violet/pink (WebGL)
+   snow: milky blues · warmth: lantern amber · husky: cool greys
+   type: Fraunces / Nunito Sans / Caveat
+   ============================================================ */
+:root{
+  --sky-0:#0d0a2b;
+  --aur-teal:#5fe8c0;
+  --snow:#eef3fc;
+  --amber:#ffb85c;
+  --amber-deep:#e8963f;
+  --card:#f7f9ff;
+  --ink:#2b2350;
+  --ink-soft:#5a5380;
+  --violet:#6c4fd8;
+  --paw:#ffd9a0;
+  --serif:"Fraunces", Georgia, serif;
+  --sans:"Nunito Sans", system-ui, sans-serif;
+  --hand:"Caveat", cursive;
+  --maxw:1080px;
+}
+
+*{ box-sizing:border-box; margin:0; padding:0; }
+html{ scroll-behavior:smooth; }
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+  *,*::before,*::after{ animation-duration:.001s !important; transition-duration:.001s !important; }
+}
+
+body{
+  font-family:var(--sans);
+  color:var(--snow);
+  background:linear-gradient(180deg,#0d0a2b 0%,#241a58 46%,#432b7d 78%,#5a3a8f 100%);
+  line-height:1.65;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+a{ color:var(--amber); text-decoration:none; }
+a:hover{ color:#ffd9a0; }
+::selection{ background:var(--amber); color:#2b2350; }
+:focus-visible{ outline:3px solid var(--amber); outline-offset:3px; border-radius:6px; }
+
+.wrap{ max-width:var(--maxw); margin:0 auto; padding:0 24px; position:relative; }
+
+/* ============ WEBGL LAYER ============ */
+#scene3d{
+  position:fixed; inset:0; z-index:0; display:block;
+  width:100vw; height:100vh; touch-action:pan-y;
+}
+.woof3d{
+  position:fixed; z-index:8; left:0; top:0;
+  font-family:var(--hand); font-size:25px; color:var(--ink);
+  background:var(--card); padding:2px 15px 4px; border-radius:14px 14px 14px 3px;
+  box-shadow:0 6px 18px rgba(10,6,40,.4);
+  opacity:0; transform:translate(-50%,-115%) scale(.8);
+  transition:opacity .2s ease, transform .2s ease;
+  pointer-events:none; white-space:nowrap;
+}
+.woof3d.show{ opacity:1; transform:translate(-50%,-130%) scale(1); }
+
+.hint3d{
+  position:fixed; z-index:7; left:0; top:0;
+  font-family:var(--hand); font-size:19px; color:var(--paw);
+  text-shadow:0 2px 10px rgba(13,10,43,.7);
+  opacity:0; transform:translate(-50%,-115%); transition:opacity .6s ease;
+  pointer-events:none; white-space:nowrap;
+}
+.hint3d.show{ opacity:.95; }
+
+/* content sits above the canvas */
+.nav, .scene, footer{ position:relative; z-index:2; }
+
+/* ============ NAV ============ */
+.nav{
+  position:fixed; top:14px; left:50%; transform:translateX(-50%); z-index:20;
+  display:flex; align-items:center; gap:20px;
+  background:rgba(20,14,55,.62); backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.14); border-radius:100px;
+  padding:9px 20px; max-width:calc(100vw - 24px);
+}
+.nav .brand{
+  display:flex; align-items:center; gap:8px;
+  font-family:var(--serif); font-weight:600; font-size:15.5px; color:var(--snow);
+  white-space:nowrap;
+}
+.nav .links{ display:flex; gap:16px; font-size:13.5px; font-weight:600; }
+.nav .links a{ color:#cfc6f2; }
+.nav .links a:hover{ color:var(--amber); }
+@media (max-width:820px){ .nav .links{ display:none; } .nav{ padding:9px 18px; } }
+
+/* ============ SCENES ============ */
+.scene{ position:relative; padding:24vh 0 26vh; }
+.scene.hero{ min-height:100vh; display:flex; align-items:center; padding:12vh 0 30vh; }
+
+.chapter{
+  font-family:var(--hand); font-size:clamp(24px, 3vw, 30px); font-weight:600;
+  color:var(--paw); transform:rotate(-2deg); display:inline-block; margin-bottom:8px;
+  text-shadow:0 2px 14px rgba(13,10,43,.7);
+}
+.scene-title{
+  font-family:var(--serif); font-weight:600;
+  font-size:clamp(34px, 5vw, 54px); line-height:1.08; letter-spacing:-.01em;
+  color:#fdfcff; text-shadow:0 4px 26px rgba(13,10,43,.65);
+  margin-bottom:14px; max-width:18ch;
+}
+.scene-title em{ font-style:italic; color:var(--amber); }
+.scene-sub{
+  color:#e2dcf8; max-width:52ch; margin-bottom:36px; font-size:16.5px;
+  text-shadow:0 2px 12px rgba(13,10,43,.6);
+}
+
+/* hero */
+.hero h1{
+  font-family:var(--serif); font-weight:600;
+  font-size:clamp(46px, 7.4vw, 88px); line-height:1.02; letter-spacing:-.015em;
+  color:#fdfcff; text-shadow:0 6px 34px rgba(13,10,43,.7); margin:6px 0 20px;
+}
+.hero h1 em{ font-style:italic; color:var(--amber); }
+.hero .lead{
+  font-size:clamp(16.5px, 1.6vw, 19px); color:#e9e4fb; max-width:52ch;
+  text-shadow:0 2px 12px rgba(13,10,43,.65); margin-bottom:26px;
+}
+.hero .lead strong{ color:#fff; font-weight:700; }
+.chips{ display:flex; flex-wrap:wrap; gap:10px; margin-bottom:44px; }
+.chip{
+  font-size:13px; font-weight:700; color:#f3eeff;
+  background:rgba(20,14,55,.45); border:1px solid rgba(255,255,255,.22);
+  backdrop-filter:blur(6px); border-radius:100px; padding:7px 15px;
+}
+.chip b{ color:var(--amber); }
+.scroll-cue{
+  display:inline-flex; align-items:center; gap:12px;
+  font-family:var(--hand); font-size:23px; color:var(--paw);
+  text-shadow:0 2px 10px rgba(13,10,43,.7);
+}
+.scroll-cue svg{ animation:pawpop 1.8s ease-in-out infinite; }
+.scroll-cue svg:nth-child(3){ animation-delay:.3s; }
+.scroll-cue svg:nth-child(4){ animation-delay:.6s; }
+@keyframes pawpop{ 0%,100%{ opacity:.25; transform:translateY(0);} 50%{ opacity:1; transform:translateY(3px);} }
+
+.note{
+  font-family:var(--hand); font-size:22px; color:var(--paw);
+  transform:rotate(-3deg); display:inline-block;
+  text-shadow:0 2px 12px rgba(13,10,43,.7);
+}
+
+/* frosted storybook card */
+.card{
+  background:var(--card); color:var(--ink);
+  border-radius:22px; padding:30px 32px;
+  box-shadow:0 24px 60px rgba(10,6,40,.5), inset 0 1px 0 rgba(255,255,255,.9);
+}
+.card p{ color:var(--ink-soft); }
+.card strong{ color:var(--ink); font-weight:700; }
+
+/* reveal */
+.rv{ opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+.rv.in{ opacity:1; transform:none; }
+@media (prefers-reduced-motion: reduce){ .rv{ opacity:1; transform:none; } }
+
+/* traveler */
+.traveler-grid{ display:grid; grid-template-columns:1.2fr .8fr; gap:26px; align-items:start; }
+@media (max-width:880px){ .traveler-grid{ grid-template-columns:1fr; } }
+.traveler-grid .card p{ margin-bottom:16px; font-size:15.5px; }
+.adv-card .head{
+  font-family:var(--serif); font-weight:600; font-size:19px; color:var(--ink);
+  padding-bottom:12px; margin-bottom:6px; border-bottom:2px dashed #ded8f2;
+}
+.adv-row{
+  display:flex; justify-content:space-between; gap:14px; padding:10px 0;
+  border-bottom:1px solid #eceaf8; font-size:14px;
+}
+.adv-row:last-child{ border-bottom:none; }
+.adv-row .k{ color:#8a83ad; font-weight:700; }
+.adv-row .v{ color:var(--ink); font-weight:700; text-align:right; }
+.adv-row .v.ok{ color:#2e9e77; }
+
+/* wonders */
+.wonder-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:22px; }
+@media (max-width:840px){ .wonder-grid{ grid-template-columns:1fr; } }
+.wonder{ position:relative; transition:transform .22s ease, box-shadow .22s ease; }
+.wonder:hover{ transform:translateY(-5px) rotate(-.4deg); box-shadow:0 30px 70px rgba(10,6,40,.6); }
+.wonder .top{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; }
+.wonder h3{ font-family:var(--serif); font-weight:600; font-size:21px; color:var(--ink); }
+.state{
+  font-size:11.5px; font-weight:800; letter-spacing:.04em; text-transform:uppercase;
+  display:inline-flex; align-items:center; gap:6px; color:#2e9e77; white-space:nowrap;
+}
+.state::before{ content:""; width:8px; height:8px; border-radius:50%; background:#37c493;
+  box-shadow:0 0 8px #37c493; animation:statepulse 2.6s ease-in-out infinite; }
+@keyframes statepulse{ 0%,100%{ opacity:1;} 50%{ opacity:.3;} }
+.state.making{ color:#c07a1f; }
+.state.making::before{ background:var(--amber-deep); box-shadow:0 0 8px var(--amber-deep); }
+.state.shipped{ color:#8a83ad; }
+.state.shipped::before{ background:#a9a2c9; box-shadow:none; animation:none; }
+.wonder p{ font-size:14.5px; margin-bottom:16px; }
+.tags{ display:flex; flex-wrap:wrap; gap:7px; }
+.tag{
+  font-size:11.5px; font-weight:800; color:var(--violet);
+  background:#efeaff; border:1px solid #ddd2ff;
+  padding:4px 11px; border-radius:100px;
+}
+
+/* trail */
+.trail{ position:relative; max-width:760px; }
+.trail::before{
+  content:""; position:absolute; left:19px; top:8px; bottom:8px;
+  border-left:3px dotted rgba(255,217,160,.55);
+}
+.step{ position:relative; padding:0 0 42px 66px; }
+.step:last-child{ padding-bottom:0; }
+.step .pawmark{ position:absolute; left:0; top:0; }
+.step .when{
+  font-family:var(--hand); font-size:22px; color:var(--paw); font-weight:600;
+  text-shadow:0 2px 10px rgba(13,10,43,.7);
+}
+.step h3{
+  font-family:var(--serif); font-weight:600; font-size:21px; color:#fdfcff;
+  text-shadow:0 3px 16px rgba(13,10,43,.65); margin:2px 0 8px;
+}
+.step h3 span{ color:#c4bbea; font-weight:500; font-size:16px; }
+.step p{
+  color:#e2dcf8; font-size:15px; max-width:58ch;
+  text-shadow:0 2px 10px rgba(13,10,43,.55);
+}
+
+/* library */
+.lib-grid{ display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+@media (max-width:840px){ .lib-grid{ grid-template-columns:1fr; } }
+.tome .kind{
+  font-size:11.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--violet); margin-bottom:10px;
+}
+.tome h3{ font-family:var(--serif); font-weight:600; font-size:21px; line-height:1.3; color:var(--ink); margin-bottom:10px; }
+.tome p{ font-size:14.5px; margin-bottom:14px; }
+.tome .meta{ font-family:var(--hand); font-size:20px; color:var(--amber-deep); }
+
+/* satchel */
+.satchel-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:22px; }
+@media (max-width:840px){ .satchel-grid{ grid-template-columns:1fr; } }
+.pocket h3{ font-family:var(--serif); font-weight:600; font-size:18px; color:var(--ink); margin-bottom:14px; }
+.pocket h3 .note-mini{ font-family:var(--hand); font-size:19px; color:var(--amber-deep); font-weight:500; margin-left:8px; }
+.pocket .tag{ font-size:12.5px; padding:6px 13px; }
+
+/* mailbox */
+.mail-card{ max-width:700px; padding:42px 44px; border-radius:26px; }
+@media (max-width:680px){ .mail-card{ padding:32px 24px; } }
+.mail-card h2{
+  font-family:var(--serif); font-weight:600; font-size:clamp(28px,3.6vw,40px);
+  line-height:1.12; color:var(--ink); margin-bottom:14px;
+}
+.mail-card h2 em{ font-style:italic; color:var(--amber-deep); }
+.mail-card p{ margin-bottom:26px; max-width:50ch; }
+.btns{ display:flex; flex-wrap:wrap; gap:13px; }
+.btn{
+  font-family:var(--sans); font-weight:800; font-size:14.5px;
+  padding:13px 24px; border-radius:100px; display:inline-flex; align-items:center; gap:9px;
+  border:2px solid #e4defa; color:var(--ink); background:#fff;
+  transition:all .18s ease;
+}
+.btn:hover{ transform:translateY(-2px); border-color:var(--amber-deep); color:var(--amber-deep); }
+.btn.primary{ background:var(--amber-deep); border-color:var(--amber-deep); color:#fff; }
+.btn.primary:hover{ background:#f5a854; color:#fff; box-shadow:0 12px 30px rgba(232,150,63,.4); }
+
+footer{
+  padding:26px 0 20vh; text-align:center;
+  font-family:var(--hand); font-size:22px; color:#c0b6ea;
+  text-shadow:0 2px 10px rgba(13,10,43,.6);
+}
+</style>
+</head>
+<body>
+
+<canvas id="scene3d" aria-hidden="true"></canvas>
+<div class="woof3d" id="woof">woof! ✦</div>
+<div class="hint3d" id="huskyHint">← boop the husky</div>
+
+<nav class="nav" aria-label="Journey">
+  <span class="brand">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="var(--amber)"><path d="M12 13c-2.8 0-5.5 2.2-5.5 4.6 0 1.6 1.2 2.6 2.9 2.6 1 0 1.7-.3 2.6-.3s1.6.3 2.6.3c1.7 0 2.9-1 2.9-2.6C17.5 15.2 14.8 13 12 13zM6.2 8.2c1.1-.2 1.8-1.5 1.5-2.9S6.3 2.9 5.2 3.1 3.4 4.6 3.7 6s1.4 2.4 2.5 2.2zm11.6 0c1.1.2 2.2-.8 2.5-2.2s-.4-2.7-1.5-2.9-2.2.8-2.5 2.2.4 2.7 1.5 2.9zM9.4 7.3c1.1 0 2-1.1 2-2.5s-.9-2.5-2-2.5-2 1.1-2 2.5.9 2.5 2 2.5zm5.2 0c1.1 0 2-1.1 2-2.5s-.9-2.5-2-2.5-2 1.1-2 2.5.9 2.5 2 2.5z"/></svg>
+    Bilal Ur Rehman
+  </span>
+  <span class="links">
+    <a href="#traveler">Traveler</a>
+    <a href="#wonders">Wonders</a>
+    <a href="#trail">Trail</a>
+    <a href="#library">Library</a>
+    <a href="#satchel">Satchel</a>
+    <a href="#mailbox">Mailbox</a>
+  </span>
+</nav>
+
+<header class="scene hero">
+  <div class="wrap">
+    <span class="chapter">somewhere past the last commit…</span>
+    <h1>Bilal &amp; the<br/><em>Wonder World.</em></h1>
+    <p class="lead">
+      <strong>Bilal Ur Rehman</strong> — AI Platform Engineer with 10+ years of .NET, SQL Server and
+      Angular in fintech. These days he wanders a stranger landscape: <strong>LLM gateways, agentic
+      loops and governance-as-code</strong> inside a regulated credit bureau — with a husky who
+      never misses a standup.
+    </p>
+    <div class="chips">
+      <span class="chip"><b>10+</b> yrs in production</span>
+      <span class="chip"><b>CKAD</b> certified</span>
+      <span class="chip">Doctoral researcher · <b>AI governance</b></span>
+      <span class="chip">Riyadh, KSA</span>
+    </div>
+    <div class="scroll-cue" aria-hidden="true">
+      scroll to wander
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 13c-2.8 0-5.5 2.2-5.5 4.6 0 1.6 1.2 2.6 2.9 2.6 1 0 1.7-.3 2.6-.3s1.6.3 2.6.3c1.7 0 2.9-1 2.9-2.6C17.5 15.2 14.8 13 12 13zM6.2 8.2c1.1-.2 1.8-1.5 1.5-2.9S6.3 2.9 5.2 3.1 3.4 4.6 3.7 6s1.4 2.4 2.5 2.2zm11.6 0c1.1.2 2.2-.8 2.5-2.2s-.4-2.7-1.5-2.9-2.2.8-2.5 2.2.4 2.7 1.5 2.9zM9.4 7.3c1.1 0 2-1.1 2-2.5s-.9-2.5-2-2.5-2 1.1-2 2.5.9 2.5 2 2.5zm5.2 0c1.1 0 2-1.1 2-2.5s-.9-2.5-2-2.5-2 1.1-2 2.5.9 2.5 2 2.5z"/></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 13c-2.8 0-5.5 2.2-5.5 4.6 0 1.6 1.2 2.6 2.9 2.6 1 0 1.7-.3 2.6-.3s1.6.3 2.6.3c1.7 0 2.9-1 2.9-2.6C17.5 15.2 14.8 13 12 13zM6.2 8.2c1.1-.2 1.8-1.5 1.5-2.9S6.3 2.9 5.2 3.1 3.4 4.6 3.7 6s1.4 2.4 2.5 2.2zm11.6 0c1.1.2 2.2-.8 2.5-2.2s-.4-2.7-1.5-2.9-2.2.8-2.5 2.2.4 2.7 1.5 2.9zM9.4 7.3c1.1 0 2-1.1 2-2.5s-.9-2.5-2-2.5-2 1.1-2 2.5.9 2.5 2 2.5zm5.2 0c1.1 0 2-1.1 2-2.5s-.9-2.5-2-2.5-2 1.1-2 2.5.9 2.5 2 2.5z"/></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 13c-2.8 0-5.5 2.2-5.5 4.6 0 1.6 1.2 2.6 2.9 2.6 1 0 1.7-.3 2.6-.3s1.6.3 2.6.3c1.7 0 2.9-1 2.9-2.6C17.5 15.2 14.8 13 12 13zM6.2 8.2c1.1-.2 1.8-1.5 1.5-2.9S6.3 2.9 5.2 3.1 3.4 4.6 3.7 6s1.4 2.4 2.5 2.2zm11.6 0c1.1.2 2.2-.8 2.5-2.2s-.4-2.7-1.5-2.9-2.2.8-2.5 2.2.4 2.7 1.5 2.9zM9.4 7.3c1.1 0 2-1.1 2-2.5s-.9-2.5-2-2.5-2 1.1-2 2.5.9 2.5 2 2.5zm5.2 0c1.1 0 2-1.1 2-2.5s-.9-2.5-2-2.5-2 1.1-2 2.5.9 2.5 2 2.5z"/></svg>
+    </div>
+  </div>
+</header>
+
+<!-- ============ CHAPTER 1 · TRAVELER ============ -->
+<section class="scene" id="traveler">
+  <div class="wrap">
+    <div class="rv">
+      <span class="chapter">chapter one</span>
+      <h2 class="scene-title">The <em>Traveler.</em></h2>
+      <p class="scene-sub">Every wonder world needs someone who reads the map — and someone who chases the snowflakes. Bilal does both.</p>
+    </div>
+    <div class="traveler-grid">
+      <div class="card rv">
+        <p>
+          For a decade, Bilal built the systems that banks and bureaus actually run on —
+          <strong>Clean Architecture microservices, CQRS pipelines, batch engines and messaging
+          backbones</strong> on .NET and SQL Server, fronted by Angular. That trail taught him the
+          hard part of enterprise software isn't the code; it's making correctness, auditability
+          and compliance the default path.
+        </p>
+        <p>
+          Now he applies that lesson to AI. At <strong>SIMAH, the Saudi Credit Bureau</strong>, he
+          owns the platform layer that lets AI coding assistants work on regulated codebases:
+          a governed LLM gateway with data-residency routing, coding standards encoded as
+          machine-checkable rules, and autonomous agent loops that review, verify and shepherd
+          pull requests before a human ever looks at them.
+        </p>
+        <p>
+          He's also a doctoral researcher studying the same question academically:
+          <strong>can governance be embedded into AI coding assistants</strong> so regulated
+          institutions get the speed without the risk? His bet — and his daily work — says yes.
+        </p>
+      </div>
+      <div>
+        <div class="card adv-card rv">
+          <div class="head">Adventurer's card</div>
+          <div class="adv-row"><span class="k">Class</span><span class="v">AI Platform Engineer</span></div>
+          <div class="adv-row"><span class="k">Guild</span><span class="v">SIMAH · Riyadh</span></div>
+          <div class="adv-row"><span class="k">Weapons</span><span class="v">.NET · SQL · Angular</span></div>
+          <div class="adv-row"><span class="k">Magic</span><span class="v">LLM infra · agents</span></div>
+          <div class="adv-row"><span class="k">Mount</span><span class="v">Kubernetes (CKAD)</span></div>
+          <div class="adv-row"><span class="k">Quest</span><span class="v">AI governance (DSR)</span></div>
+          <div class="adv-row"><span class="k">Status</span><span class="v ok">✦ wandering</span></div>
+        </div>
+        <span class="note" style="margin-top:14px">← the husky vouches for all of this</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 2 · WONDERS ============ -->
+<section class="scene" id="wonders">
+  <div class="wrap">
+    <div class="rv">
+      <span class="chapter">chapter two</span>
+      <h2 class="scene-title">The Six <em>Wonders.</em></h2>
+      <p class="scene-sub">Strange glowing structures dot the landscape. Each one is real, and each one shipped — or is being carved right now.</p>
+    </div>
+    <div class="wonder-grid">
+
+      <article class="card wonder rv">
+        <div class="top"><h3>The Gateway</h3><span class="state">live</span></div>
+        <p>A governed LLM gateway for AI coding-assistant traffic in a regulated bureau: a
+        data-residency gate routes sensitive work to on-prem models, while org coding standards run
+        as machine-checkable rules in CI — compliance enforced per commit, not per audit.</p>
+        <div class="tags"><span class="tag">.NET</span><span class="tag">Policy routing</span><span class="tag">CI/CD</span><span class="tag">SAMA / PDPL</span></div>
+      </article>
+
+      <article class="card wonder rv">
+        <div class="top"><h3>The Loops</h3><span class="state">live</span></div>
+        <p>Autonomous engineering loops built on Claude Code: a PR-shepherd that verifies changes
+        against org standards, morning review digests, and recurring tasks on self-hosted runners —
+        agents doing the rounds so engineers start the day ahead.</p>
+        <div class="tags"><span class="tag">Claude Code</span><span class="tag">GitHub Actions</span><span class="tag">Ollama</span><span class="tag">Skills</span></div>
+      </article>
+
+      <article class="card wonder rv">
+        <div class="top"><h3>Verdict</h3><span class="state making">in the making</span></div>
+        <p>An evaluation and reliability harness for AI agents: versioned YAML scenarios, full
+        trajectory tracing, and multi-layer scoring including LLM-as-judge — because an agent you
+        can't measure is an agent you can't trust in production.</p>
+        <div class="tags"><span class="tag">Agent evals</span><span class="tag">Trajectory tracing</span><span class="tag">LLM-as-judge</span></div>
+      </article>
+
+      <article class="card wonder rv">
+        <div class="top"><h3>DocIntel</h3><span class="state making">in the making</span></div>
+        <p>A multimodal document-intelligence pipeline: ingestion, extraction and structured output
+        over messy real-world documents — the unglamorous plumbing that turns PDFs into data a
+        system can act on.</p>
+        <div class="tags"><span class="tag">Multimodal</span><span class="tag">RAG</span><span class="tag">Pipelines</span></div>
+      </article>
+
+      <article class="card wonder rv">
+        <div class="top"><h3>Tassnief Platform</h3><span class="state shipped">shipped</span></div>
+        <p>End-to-end architecture for a credit-rating platform: Angular 20 front end, ASP.NET Core
+        services, workflow engine, message bus and multi-database SQL Server design — rating
+        workflows from intake to committee, in production.</p>
+        <div class="tags"><span class="tag">Angular 20</span><span class="tag">ASP.NET Core</span><span class="tag">RabbitMQ</span><span class="tag">SQL Server</span></div>
+      </article>
+
+      <article class="card wonder rv">
+        <div class="top"><h3>DbPulse</h3><span class="state shipped">shipped</span></div>
+        <p>A SQL Server performance monitor with a pluggable LLM analysis layer (Ollama, OpenAI or
+        mock) — wait stats and slow queries explained in plain language, model choice abstracted
+        behind one interface.</p>
+        <div class="tags"><span class="tag">SQL Server</span><span class="tag">Diagnostics</span><span class="tag">LLM abstraction</span></div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 3 · TRAIL ============ -->
+<section class="scene" id="trail">
+  <div class="wrap">
+    <div class="rv">
+      <span class="chapter">chapter three</span>
+      <h2 class="scene-title">The Trail <em>So Far.</em></h2>
+      <p class="scene-sub">Pawprints in the snow, newest first. Follow them back far enough and you'll find the first production deploy.</p>
+    </div>
+    <div class="trail">
+
+      <div class="step rv">
+        <span class="pawmark"><svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="19" fill="#ffb85c"/><path fill="#5a3a14" transform="translate(8,8) scale(1)" d="M12 13c-2.8 0-5.5 2.2-5.5 4.6 0 1.6 1.2 2.6 2.9 2.6 1 0 1.7-.3 2.6-.3s1.6.3 2.6.3c1.7 0 2.9-1 2.9-2.6C17.5 15.2 14.8 13 12 13zM6.2 8.2c1.1-.2 1.8-1.5 1.5-2.9S6.3 2.9 5.2 3.1 3.4 4.6 3.7 6s1.4 2.4 2.5 2.2zm11.6 0c1.1.2 2.2-.8 2.5-2.2s-.4-2.7-1.5-2.9-2.2.8-2.5 2.2.4 2.7 1.5 2.9zM9.4 7.3c1.1 0 2-1.1 2-2.5s-.9-2.5-2-2.5-2 1.1-2 2.5.9 2.5 2 2.5zm5.2 0c1.1 0 2-1.1 2-2.5s-.9-2.5-2-2.5-2 1.1-2 2.5.9 2.5 2 2.5z"/></svg></span>
+        <span class="when">now</span>
+        <h3>AI Platform Engineering <span>· SIMAH (Saudi Credit Bureau)</span></h3>
+        <p>Owning LLM gateway infrastructure, agentic loop systems and the AI coding-assistant
+        program for a SAMA/PDPL-regulated institution — plus CI/CD to Kubernetes for .NET and
+        Angular workloads.</p>
+      </div>
+
+      <div class="step rv">
+        <span class="pawmark"><svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="19" fill="#c9a8ff"/><path fill="#3a2470" transform="translate(8,8)" d="M12 13c-2.8 0-5.5 2.2-5.5 4.6 0 1.6 1.2 2.6 2.9 2.6 1 0 1.7-.3 2.6-.3s1.6.3 2.6.3c1.7 0 2.9-1 2.9-2.6C17.5 15.2 14.8 13 12 13zM6.2 8.2c1.1-.2 1.8-1.5 1.5-2.9S6.3 2.9 5.2 3.1 3.4 4.6 3.7 6s1.4 2.4 2.5 2.2zm11.6 0c1.1.2 2.2-.8 2.5-2.2s-.4-2.7-1.5-2.9-2.2.8-2.5 2.2.4 2.7 1.5 2.9zM9.4 7.3c1.1 0 2-1.1 2-2.5s-.9-2.5-2-2.5-2 1.1-2 2.5.9 2.5 2 2.5zm5.2 0c1.1 0 2-1.1 2-2.5s-.9-2.5-2-2.5-2 1.1-2 2.5.9 2.5 2 2.5z"/></svg></span>
+        <span class="when">May 2026</span>
+        <h3>The Doctorate begins <span>· AI &amp; Technology Management</span></h3>
+        <p>Design Science Research on governance-embedded AI coding assistants in regulated
+        financial institutions — turning the day job into defensible science.</p>
+      </div>
+
+      <div class="step rv">
+        <span class="pawmark"><svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="19" fill="#7ff0cf"/><path fill="#1c5a46" transform="translate(8,8)" d="M12 13c-2.8 0-5.5 2.2-5.5 4.6 0 1.6 1.2 2.6 2.9 2.6 1 0 1.7-.3 2.6-.3s1.6.3 2.6.3c1.7 0 2.9-1 2.9-2.6C17.5 15.2 14.8 13 12 13zM6.2 8.2c1.1-.2 1.8-1.5 1.5-2.9S6.3 2.9 5.2 3.1 3.4 4.6 3.7 6s1.4 2.4 2.5 2.2zm11.6 0c1.1.2 2.2-.8 2.5-2.2s-.4-2.7-1.5-2.9-2.2.8-2.5 2.2.4 2.7 1.5 2.9zM9.4 7.3c1.1 0 2-1.1 2-2.5s-.9-2.5-2-2.5-2 1.1-2 2.5.9 2.5 2 2.5zm5.2 0c1.1 0 2-1.1 2-2.5s-.9-2.5-2-2.5-2 1.1-2 2.5.9 2.5 2 2.5z"/></svg></span>
+        <span class="when">2026</span>
+        <h3>M.Sc. completed · CKAD certified</h3>
+        <p>Master's thesis on AI-based malicious domain detection using open-source cybersecurity
+        datasets; Kubernetes application development certified the same year.</p>
+      </div>
+
+      <div class="step rv">
+        <span class="pawmark"><svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="19" fill="#8fe6ff"/><path fill="#1e4a66" transform="translate(8,8)" d="M12 13c-2.8 0-5.5 2.2-5.5 4.6 0 1.6 1.2 2.6 2.9 2.6 1 0 1.7-.3 2.6-.3s1.6.3 2.6.3c1.7 0 2.9-1 2.9-2.6C17.5 15.2 14.8 13 12 13zM6.2 8.2c1.1-.2 1.8-1.5 1.5-2.9S6.3 2.9 5.2 3.1 3.4 4.6 3.7 6s1.4 2.4 2.5 2.2zm11.6 0c1.1.2 2.2-.8 2.5-2.2s-.4-2.7-1.5-2.9-2.2.8-2.5 2.2.4 2.7 1.5 2.9zM9.4 7.3c1.1 0 2-1.1 2-2.5s-.9-2.5-2-2.5-2 1.1-2 2.5.9 2.5 2 2.5zm5.2 0c1.1 0 2-1.1 2-2.5s-.9-2.5-2-2.5-2 1.1-2 2.5.9 2.5 2 2.5z"/></svg></span>
+        <span class="when">2015 → 2024</span>
+        <h3>A decade of regulated fintech <span>· Senior Software Engineer</span></h3>
+        <p>Designed and shipped microservice platforms on .NET and SQL Server — CQRS with MediatR,
+        Hangfire batch pipelines, RabbitMQ messaging, Duende IdentityServer — and led Angular
+        front-end architecture across large-scale systems.</p>
+      </div>
+
+      <div class="step rv">
+        <span class="pawmark"><svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="19" fill="#eef3fc"/><path fill="#4a4470" transform="translate(8,8)" d="M12 13c-2.8 0-5.5 2.2-5.5 4.6 0 1.6 1.2 2.6 2.9 2.6 1 0 1.7-.3 2.6-.3s1.6.3 2.6.3c1.7 0 2.9-1 2.9-2.6C17.5 15.2 14.8 13 12 13zM6.2 8.2c1.1-.2 1.8-1.5 1.5-2.9S6.3 2.9 5.2 3.1 3.4 4.6 3.7 6s1.4 2.4 2.5 2.2zm11.6 0c1.1.2 2.2-.8 2.5-2.2s-.4-2.7-1.5-2.9-2.2.8-2.5 2.2.4 2.7 1.5 2.9zM9.4 7.3c1.1 0 2-1.1 2-2.5s-.9-2.5-2-2.5-2 1.1-2 2.5.9 2.5 2 2.5zm5.2 0c1.1 0 2-1.1 2-2.5s-.9-2.5-2-2.5-2 1.1-2 2.5.9 2.5 2 2.5z"/></svg></span>
+        <span class="when">the first pawprint</span>
+        <h3>First production .NET systems</h3>
+        <p>Where the habit started: making software that other people's money depends on.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 4 · LIBRARY ============ -->
+<section class="scene" id="library">
+  <div class="wrap">
+    <div class="rv">
+      <span class="chapter">chapter four</span>
+      <h2 class="scene-title">The Crystal <em>Library.</em></h2>
+      <p class="scene-sub">Deep in the grove stands a very large book. The husky can't read it. Bilal wrote half of it.</p>
+    </div>
+    <div class="lib-grid">
+
+      <article class="card tome rv">
+        <div class="kind">Doctoral research · in progress</div>
+        <h3>Governance-embedded AI coding assistants in SAMA/PDPL-regulated financial institutions</h3>
+        <p>Can compliance and code-security controls be built <strong>into</strong> the assistant
+        rather than bolted on around it? A Design Science Research study measuring regulatory
+        compliance and security quality of AI-generated code, benchmarked against public
+        standards — PDPL, the SAMA cybersecurity framework, OWASP ASVS and NIST SSDF.</p>
+        <div class="meta">methodology: DSR · artifact: the SCoRe-CS benchmark · 2026 →</div>
+      </article>
+
+      <article class="card tome rv">
+        <div class="kind">Master's thesis · completed</div>
+        <h3>Evaluating AI-based techniques for malicious domain detection</h3>
+        <p>A comparative evaluation of machine-learning approaches to malicious domain detection
+        using open-source cybersecurity datasets — where the interest in AI × security ×
+        measurable evidence first took shape.</p>
+        <div class="meta">field: cybersecurity × ML · completed 2026</div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 5 · SATCHEL ============ -->
+<section class="scene" id="satchel">
+  <div class="wrap">
+    <div class="rv">
+      <span class="chapter">chapter five</span>
+      <h2 class="scene-title">What's in the <em>Satchel.</em></h2>
+      <p class="scene-sub">Packed light, packed deep. Everything in here has survived real production weather.</p>
+    </div>
+    <div class="satchel-grid">
+
+      <div class="card pocket rv">
+        <h3>Backend &amp; data<span class="note-mini">the old reliables</span></h3>
+        <div class="tags"><span class="tag">C# / .NET 8</span><span class="tag">ASP.NET Core</span><span class="tag">SQL Server</span><span class="tag">Dapper</span><span class="tag">CQRS · MediatR</span><span class="tag">Hangfire</span><span class="tag">RabbitMQ</span><span class="tag">Clean Architecture</span></div>
+      </div>
+
+      <div class="card pocket rv">
+        <h3>Frontend<span class="note-mini">the shiny bits</span></h3>
+        <div class="tags"><span class="tag">Angular 20</span><span class="tag">TypeScript</span><span class="tag">NgRx + Signals</span><span class="tag">RxJS</span><span class="tag">Design systems</span></div>
+      </div>
+
+      <div class="card pocket rv">
+        <h3>Platform &amp; infra<span class="note-mini">the sled</span></h3>
+        <div class="tags"><span class="tag">Kubernetes (CKAD)</span><span class="tag">Docker</span><span class="tag">Azure DevOps</span><span class="tag">GitHub Actions</span><span class="tag">CI/CD to K8s</span><span class="tag">IdentityServer</span></div>
+      </div>
+
+      <div class="card pocket rv">
+        <h3>AI systems<span class="note-mini">the strange magic</span></h3>
+        <div class="tags"><span class="tag">LLM gateways</span><span class="tag">Agentic loops</span><span class="tag">Claude Code</span><span class="tag">Ollama · local inference</span><span class="tag">RAG · Qdrant</span><span class="tag">Agent evals</span><span class="tag">Governance-as-code</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ FINAL CHAPTER · MAILBOX ============ -->
+<section class="scene" id="mailbox">
+  <div class="wrap">
+    <div class="rv">
+      <span class="chapter">final chapter</span>
+      <h2 class="scene-title">The Mailbox at the <em>Edge of the World.</em></h2>
+      <p class="scene-sub">Every journey ends at a little red mailbox. The flag is up. The husky is waiting.</p>
+    </div>
+    <div class="card mail-card rv">
+      <h2>Building an AI platform inside a <em>regulated business?</em></h2>
+      <p>That's the exact problem Bilal works on every day. If you're hiring for AI platform
+      engineering — or you want to compare notes on agents, governance and evals — drop a letter
+      in the box. The husky delivers same-day.</p>
+      <div class="btns">
+        <!-- TODO: replace the three hrefs below with your real links -->
+        <a class="btn primary" href="mailto:your.email@example.com">✉ Send a letter</a>
+        <a class="btn" href="https://github.com/your-github" target="_blank" rel="noopener">GitHub</a>
+        <a class="btn" href="https://linkedin.com/in/your-linkedin" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  the husky wags goodbye · © 2026 Bilal Ur Rehman
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  if(!window.THREE){ document.getElementById('scene3d').style.display = 'none'; return; }
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const canvas = document.getElementById('scene3d');
+  let renderer;
+  try{
+    renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+  }catch(e){ canvas.style.display = 'none'; return; }
+
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.8));
+  renderer.setSize(innerWidth, innerHeight);
+
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.Fog(0x3b2b73, 16, 64);
+
+  const camera = new THREE.PerspectiveCamera(52, innerWidth/innerHeight, 0.1, 400);
+
+  const PATH = 150;                       // world units of journey
+  const isMobile = innerWidth < 760;
+
+  /* ---------------- helpers ---------------- */
+  function radialTexture(inner, outer){
+    const c = document.createElement('canvas'); c.width = c.height = 128;
+    const g = c.getContext('2d');
+    const grad = g.createRadialGradient(64,64,4, 64,64,62);
+    grad.addColorStop(0, inner); grad.addColorStop(1, outer);
+    g.fillStyle = grad; g.fillRect(0,0,128,128);
+    return new THREE.CanvasTexture(c);
+  }
+  const glowTex   = radialTexture('rgba(255,255,255,1)', 'rgba(255,255,255,0)');
+  const shadowTex = radialTexture('rgba(8,5,30,0.85)',   'rgba(8,5,30,0)');
+
+  function mat(color, opts){
+    return new THREE.MeshStandardMaterial(Object.assign(
+      { color: color, flatShading: true, roughness: 1, metalness: 0 }, opts || {}));
+  }
+  function box(w,h,d, m){ return new THREE.Mesh(new THREE.BoxGeometry(w,h,d), m); }
+
+  /* ---------------- lights ---------------- */
+  scene.add(new THREE.HemisphereLight(0x9a8cf5, 0x241a4e, 0.85));
+  const moonLight = new THREE.DirectionalLight(0xcfdcff, 0.75);
+  moonLight.position.set(6, 12, 4);
+  scene.add(moonLight);
+
+  /* ---------------- sky group (follows camera) ---------------- */
+  const skyGroup = new THREE.Group(); scene.add(skyGroup);
+
+  const skyMat = new THREE.ShaderMaterial({
+    side: THREE.BackSide, depthWrite: false, fog: false,
+    uniforms: {},
+    vertexShader: `
+      varying float vH;
+      void main(){
+        vH = normalize(position).y;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }`,
+    fragmentShader: `
+      varying float vH;
+      void main(){
+        vec3 bottom = vec3(0.353, 0.227, 0.561);   /* #5a3a8f */
+        vec3 mid    = vec3(0.165, 0.110, 0.369);   /* #2a1c5e */
+        vec3 top    = vec3(0.051, 0.039, 0.169);   /* #0d0a2b */
+        vec3 c = mix(bottom, mid, smoothstep(-0.08, 0.28, vH));
+        c = mix(c, top, smoothstep(0.28, 0.85, vH));
+        gl_FragColor = vec4(c, 1.0);
+      }`
+  });
+  skyGroup.add(new THREE.Mesh(new THREE.SphereGeometry(180, 20, 14), skyMat));
+
+  /* aurora ribbons */
+  const auroraUniforms = [];
+  function ribbon(colA, colB, y, z, phase){
+    const u = { uTime: { value: phase } };
+    auroraUniforms.push(u.uTime);
+    const m = new THREE.ShaderMaterial({
+      transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false,
+      uniforms: u,
+      vertexShader: `
+        uniform float uTime; varying vec2 vUv;
+        void main(){
+          vUv = uv;
+          vec3 p = position;
+          p.z += sin(p.x * 0.14 + uTime) * 1.8 + sin(p.x * 0.05 - uTime * 0.6) * 3.0;
+          p.y += sin(p.x * 0.10 + uTime * 0.8) * 1.2;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+        }`,
+      fragmentShader: `
+        uniform float uTime; varying vec2 vUv;
+        void main(){
+          float band = smoothstep(0.0, 0.45, vUv.y) * smoothstep(1.0, 0.55, vUv.y);
+          float shimmer = 0.55 + 0.45 * sin(vUv.x * 22.0 + uTime * 1.4);
+          vec3 a = vec3(${colA}); vec3 b = vec3(${colB});
+          vec3 c = mix(a, b, vUv.x);
+          gl_FragColor = vec4(c, band * shimmer * 0.34);
+        }`
+    });
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(120, 10, 96, 6), m);
+    mesh.position.set(0, y, z); mesh.rotation.x = -0.25;
+    skyGroup.add(mesh);
+  }
+  ribbon('0.373,0.910,0.753', '0.616,0.482,1.000', 27, -48, 0.0);   /* teal -> violet */
+  ribbon('0.616,0.482,1.000', '1.000,0.604,0.835', 33, -58, 2.1);   /* violet -> pink */
+  ribbon('0.373,0.910,0.753', '0.561,0.902,1.000', 22, -40, 4.2);   /* teal -> ice */
+
+  /* stars */
+  function starField(count, size, spreadY){
+    const pos = new Float32Array(count * 3);
+    for(let i = 0; i < count; i++){
+      pos[i*3]   = (Math.random() - 0.5) * 260;
+      pos[i*3+1] = spreadY[0] + Math.random() * (spreadY[1] - spreadY[0]);
+      pos[i*3+2] = -20 - Math.random() * 150;
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    const m = new THREE.PointsMaterial({ color: 0xffffff, size: size, transparent: true, opacity: 0.85, fog: false, sizeAttenuation: true });
+    const pts = new THREE.Points(g, m);
+    skyGroup.add(pts);
+    return m;
+  }
+  const starsA = starField(isMobile ? 260 : 480, 0.4, [12, 95]);
+  const starsB = starField(isMobile ? 120 : 220, 0.75, [18, 95]);
+
+  /* moon + glow */
+  const moon = new THREE.Mesh(new THREE.SphereGeometry(3.4, 20, 16),
+    new THREE.MeshBasicMaterial({ color: 0xfff3d6, fog: false }));
+  moon.position.set(26, 36, -80); skyGroup.add(moon);
+  const moonGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: 0xffe2a8, transparent: true, opacity: 0.55, fog: false, depthWrite: false }));
+  moonGlow.scale.set(26, 26, 1); moonGlow.position.copy(moon.position); skyGroup.add(moonGlow);
+
+  /* hot-air balloon */
+  const balloon = new THREE.Group();
+  const env = new THREE.Mesh(new THREE.SphereGeometry(2.1, 10, 10), mat(0xff9ad5, { flatShading: true }));
+  env.scale.y = 1.18; balloon.add(env);
+  const stripe = new THREE.Mesh(new THREE.SphereGeometry(2.12, 10, 10, 0, Math.PI * 2, 1.05, 0.55), mat(0xffb85c));
+  stripe.scale.y = 1.18; balloon.add(stripe);
+  const basket = box(0.9, 0.7, 0.9, mat(0x8a5a3b)); basket.position.y = -3.3; balloon.add(basket);
+  for(let i = 0; i < 4; i++){
+    const rope = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 1.4), mat(0xf6e6c8));
+    rope.position.set(i < 2 ? -0.4 : 0.4, -2.55, (i % 2) ? -0.4 : 0.4);
+    balloon.add(rope);
+  }
+  balloon.position.set(-24, 17, -50); skyGroup.add(balloon);
+
+  /* ---------------- snow (follows camera) ---------------- */
+  const snowGroup = new THREE.Group(); scene.add(snowGroup);
+  const SNOW_N = isMobile ? 500 : 1100;
+  const snowPos = new Float32Array(SNOW_N * 3);
+  const snowVel = new Float32Array(SNOW_N * 2);
+  for(let i = 0; i < SNOW_N; i++){
+    snowPos[i*3]   = (Math.random() - 0.5) * 56;
+    snowPos[i*3+1] = Math.random() * 22;
+    snowPos[i*3+2] = (Math.random() - 0.5) * 60;
+    snowVel[i*2]   = 1.1 + Math.random() * 1.6;      /* fall speed */
+    snowVel[i*2+1] = Math.random() * Math.PI * 2;    /* sway phase */
+  }
+  const snowGeo = new THREE.BufferGeometry();
+  snowGeo.setAttribute('position', new THREE.BufferAttribute(snowPos, 3));
+  const snowPts = new THREE.Points(snowGeo,
+    new THREE.PointsMaterial({ color: 0xffffff, size: 0.14, transparent: true, opacity: 0.9, sizeAttenuation: true }));
+  snowGroup.add(snowPts);
+
+  /* ---------------- terrain ---------------- */
+  const TER_L = PATH + 70;
+  let terGeo = new THREE.PlaneGeometry(70, TER_L, 42, 150);
+  {
+    const p = terGeo.attributes.position;
+    for(let i = 0; i < p.count; i++){
+      const x = p.getX(i), y = p.getY(i);
+      let h = 0.55 * Math.sin(x * 0.32) * Math.cos(y * 0.17)
+            + 0.30 * Math.sin(x * 0.85 + y * 0.33)
+            + 0.18 * Math.cos(x * 1.7 - y * 0.9);
+      const trail = THREE.MathUtils.smoothstep(Math.abs(x), 2.6, 7.0);   /* keep the trail flat */
+      h *= trail;
+      const ax = Math.abs(x);
+      if(ax > 15) h += (ax - 15) * 0.16;                                  /* rise toward edges */
+      p.setZ(i, h);
+    }
+  }
+  terGeo = terGeo.toNonIndexed();
+  terGeo.computeVertexNormals();
+  const terrain = new THREE.Mesh(terGeo, mat(0xdfe8fa));
+  terrain.rotation.x = -Math.PI / 2;
+  terrain.position.z = 18 - TER_L / 2;
+  scene.add(terrain);
+
+  /* distant low-poly mountains */
+  for(let i = 0; i < 9; i++){
+    const side = i % 2 ? 1 : -1;
+    const m = new THREE.Mesh(new THREE.ConeGeometry(16 + Math.random()*22, 16 + Math.random()*20, 5),
+      mat(i % 3 ? 0x2a1e5c : 0x362a75, { fog: true }));
+    m.position.set(side * (34 + Math.random() * 22), 4, 6 - i * (PATH / 8) - Math.random() * 8);
+    m.rotation.y = Math.random() * Math.PI;
+    scene.add(m);
+  }
+
+  /* ---------------- pine forest (instanced) ---------------- */
+  const TREE_N = isMobile ? 55 : 95;
+  const trunkG = new THREE.CylinderGeometry(0.12, 0.2, 0.9, 6);  trunkG.translate(0, 0.45, 0);
+  const foliG  = new THREE.ConeGeometry(1.15, 2.9, 6);           foliG.translate(0, 2.25, 0);
+  const capG   = new THREE.ConeGeometry(0.45, 0.95, 6);          capG.translate(0, 3.5, 0);
+  const trunkI = new THREE.InstancedMesh(trunkG, mat(0x2a2050), TREE_N);
+  const foliI  = new THREE.InstancedMesh(foliG,  mat(0x3b2f6e), TREE_N);
+  const capI   = new THREE.InstancedMesh(capG,   mat(0xeef3fc), TREE_N);
+  {
+    const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), P = new THREE.Vector3(), S = new THREE.Vector3();
+    const up = new THREE.Vector3(0, 1, 0);
+    for(let i = 0; i < TREE_N; i++){
+      const side = Math.random() < 0.5 ? -1 : 1;
+      P.set(side * (6.5 + Math.random() * 20), 0, 10 - Math.random() * (PATH + 30));
+      Q.setFromAxisAngle(up, Math.random() * Math.PI * 2);
+      const s = 0.7 + Math.random() * 1.25;
+      S.set(s, s * (0.85 + Math.random() * 0.5), s);
+      M.compose(P, Q, S);
+      trunkI.setMatrixAt(i, M); foliI.setMatrixAt(i, M); capI.setMatrixAt(i, M);
+    }
+    trunkI.instanceMatrix.needsUpdate = true;
+    foliI.instanceMatrix.needsUpdate = true;
+    capI.instanceMatrix.needsUpdate = true;
+  }
+  scene.add(trunkI, foliI, capI);
+
+  /* ---------------- landmarks (placed at each chapter) ---------------- */
+  const landmarks = [];   /* { group, sectionId, offX } */
+  function landmark(id, offX, builder){
+    const g = new THREE.Group();
+    builder(g);
+    g.position.x = offX;
+    scene.add(g);
+    landmarks.push({ group: g, id: id });
+  }
+
+  /* wonders: glowing crystal garden */
+  landmark('wonders', -6.5, function(g){
+    const cols = [0x5fe8c0, 0x8fe6ff, 0xc9a8ff, 0x7ff0cf, 0x9d7bff];
+    for(let i = 0; i < 6; i++){
+      const h = 2.2 + Math.random() * 3.4;
+      const c = new THREE.Mesh(new THREE.ConeGeometry(0.45 + Math.random() * 0.5, h, 5),
+        mat(cols[i % cols.length], { emissive: cols[i % cols.length], emissiveIntensity: 0.6, transparent: true, opacity: 0.92 }));
+      c.position.set((Math.random() - 0.5) * 5, h / 2, (Math.random() - 0.5) * 4);
+      c.rotation.y = Math.random() * Math.PI;
+      g.add(c);
+    }
+    const l = new THREE.PointLight(0x5fe8c0, 1.3, 18); l.position.set(0, 3, 0); g.add(l);
+    const gl = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: 0x5fe8c0, transparent: true, opacity: 0.4, depthWrite: false }));
+    gl.scale.set(12, 12, 1); gl.position.y = 2.5; g.add(gl);
+  });
+
+  /* trail: two amber lantern posts */
+  function lanternBuilder(g){
+    const post = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.13, 3.2, 6), mat(0x241a4e));
+    post.position.y = 1.6; g.add(post);
+    const lamp = box(0.62, 0.72, 0.62, mat(0xffce8a, { emissive: 0xffb85c, emissiveIntensity: 1.1 }));
+    lamp.position.y = 3.45; g.add(lamp);
+    const cap = new THREE.Mesh(new THREE.ConeGeometry(0.55, 0.45, 4), mat(0x241a4e));
+    cap.position.y = 3.98; cap.rotation.y = Math.PI / 4; g.add(cap);
+    const gl = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: 0xffb85c, transparent: true, opacity: 0.55, depthWrite: false }));
+    gl.scale.set(6, 6, 1); gl.position.y = 3.45; g.add(gl);
+    const l = new THREE.PointLight(0xffb85c, 0.95, 12); l.position.y = 3.4; g.add(l);
+  }
+  landmark('trail', -4.6, lanternBuilder);
+  landmark('trail',  4.6, function(g){
+    const s = new THREE.Group(); lanternBuilder(s); s.position.z = 4; g.add(s);
+  });
+
+  /* library: the great tome */
+  landmark('library', -7, function(g){
+    const mound = new THREE.Mesh(new THREE.SphereGeometry(3.4, 10, 8), mat(0xdfe8fa));
+    mound.scale.set(1.5, 0.35, 1.2); g.add(mound);
+    const book = new THREE.Group();
+    const covL = box(2.1, 4.6, 0.35, mat(0x6c4fd8)); covL.position.set(-1.15, 0, 0); covL.rotation.y =  0.22;
+    const covR = box(2.1, 4.6, 0.35, mat(0x5a3fbd)); covR.position.set( 1.15, 0, 0); covR.rotation.y = -0.22;
+    const pages = box(2.0, 4.25, 0.75, mat(0xf3ead6)); pages.position.z = 0.12;
+    const star = new THREE.Mesh(new THREE.ConeGeometry(0.5, 0.18, 5),
+      mat(0xffce8a, { emissive: 0xffb85c, emissiveIntensity: 0.9 }));
+    star.rotation.x = Math.PI / 2; star.position.set(-1.2, 0.6, 0.28); star.rotation.z = 0.2;
+    book.add(covL, covR, pages, star);
+    book.position.y = 3.3; book.rotation.y = 0.55;
+    g.add(book);
+  });
+
+  /* satchel: camp — tent + flickering fire */
+  let flameA, flameB, fireLight;
+  landmark('satchel', 6.2, function(g){
+    const tent = new THREE.Mesh(new THREE.ConeGeometry(2.7, 3.4, 4), mat(0x4a3b8c));
+    tent.position.y = 1.7; tent.rotation.y = Math.PI / 4; g.add(tent);
+    const door = new THREE.Mesh(new THREE.ConeGeometry(1.05, 1.7, 4),
+      mat(0xffce8a, { emissive: 0xffb85c, emissiveIntensity: 0.8 }));
+    door.position.set(0, 0.86, 1.45); door.rotation.y = Math.PI / 4; door.scale.z = 0.3; g.add(door);
+
+    const fire = new THREE.Group(); fire.position.set(-3.6, 0, 1.2);
+    for(let i = 0; i < 3; i++){
+      const log = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 1.6, 6), mat(0x6a4028));
+      log.rotation.z = Math.PI / 2; log.rotation.y = i * 1.05; log.position.y = 0.15;
+      fire.add(log);
+    }
+    flameA = new THREE.Mesh(new THREE.ConeGeometry(0.42, 1.15, 6),
+      mat(0xffb85c, { emissive: 0xff9040, emissiveIntensity: 1.4 }));
+    flameA.position.y = 0.85; fire.add(flameA);
+    flameB = new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.7, 6),
+      mat(0xfff3dc, { emissive: 0xffe0a0, emissiveIntensity: 1.6 }));
+    flameB.position.y = 1.0; fire.add(flameB);
+    fireLight = new THREE.PointLight(0xff9d4d, 1.6, 16); fireLight.position.set(0, 1.4, 0); fire.add(fireLight);
+    g.add(fire);
+  });
+
+  /* mailbox at the edge of the world */
+  landmark('mailbox', -4.2, function(g){
+    const post = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.14, 2.1, 6), mat(0x5a3a24));
+    post.position.y = 1.05; g.add(post);
+    const bodyM = box(1.25, 1.05, 1.9, mat(0xe05a6a)); bodyM.position.y = 2.5; g.add(bodyM);
+    const roof = box(1.35, 0.3, 2.0, mat(0xc74757)); roof.position.y = 3.1; roof.rotation.z = 0.0; g.add(roof);
+    const doorP = box(0.95, 0.75, 0.06, mat(0xfff3dc)); doorP.position.set(0, 2.5, 0.98); g.add(doorP);
+    const flagPole = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.8, 5), mat(0xffb85c, { emissive: 0xffb85c, emissiveIntensity: 0.4 }));
+    flagPole.position.set(0.72, 3.2, 0); g.add(flagPole);
+    const flag = box(0.5, 0.32, 0.06, mat(0xffb85c, { emissive: 0xffb85c, emissiveIntensity: 0.5 }));
+    flag.position.set(0.95, 3.45, 0); g.add(flag);
+    const gl = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: 0xffb85c, transparent: true, opacity: 0.35, depthWrite: false }));
+    gl.scale.set(7, 7, 1); gl.position.y = 2.6; g.add(gl);
+  });
+
+  /* place landmarks at each chapter's scroll position */
+  function placeLandmarks(){
+    const max = document.documentElement.scrollHeight - innerHeight;
+    landmarks.forEach(function(L){
+      const el = document.getElementById(L.id);
+      if(!el || max <= 0) return;
+      const frac = Math.min(1, Math.max(0, (el.offsetTop + el.offsetHeight * 0.4 - innerHeight * 0.45) / max));
+      L.group.position.z = -frac * PATH;
+    });
+  }
+
+  /* ---------------- THE HUSKY (cartoon edition) ---------------- */
+  const COAT = 0x3d4351, CREAM = 0xf7f9ff, PINK = 0xf2a7bd, TONGUE = 0xff8fa3, DARKF = 0x23262f;
+  const husky = new THREE.Group();          /* moves along the trail  */
+  const hBody = new THREE.Group();          /* bobs / jumps / poses   */
+  husky.add(hBody);
+
+  const torso = box(1.02, 0.8, 1.5, mat(COAT)); torso.position.y = 1.0; hBody.add(torso);
+  const belly = box(0.96, 0.52, 1.18, mat(CREAM)); belly.position.set(0, 0.72, -0.08); hBody.add(belly);
+  const ruff  = box(1.14, 0.8, 0.58, mat(CREAM)); ruff.position.set(0, 1.12, -0.6); hBody.add(ruff);
+  const haunchL = box(0.2, 0.64, 0.7, mat(CREAM)); haunchL.position.set(-0.52, 0.88, 0.4); hBody.add(haunchL);
+  const haunchR = haunchL.clone(); haunchR.position.x = 0.52; hBody.add(haunchR);
+
+  /* big puppy head */
+  const head = new THREE.Group(); head.position.set(0, 1.8, -0.9); hBody.add(head);
+  const skull = box(0.92, 0.76, 0.8, mat(COAT)); head.add(skull);
+  const lowerFace = box(0.95, 0.42, 0.82, mat(CREAM)); lowerFace.position.y = -0.2; head.add(lowerFace);
+  const cheekL = box(0.16, 0.36, 0.52, mat(CREAM)); cheekL.position.set(-0.52, -0.16, -0.04); cheekL.rotation.z = 0.28; head.add(cheekL);
+  const cheekR = cheekL.clone(); cheekR.position.x = 0.52; cheekR.rotation.z = -0.28; head.add(cheekR);
+  const muzzle = box(0.48, 0.36, 0.44, mat(CREAM)); muzzle.position.set(0, -0.2, -0.58); head.add(muzzle);
+  const nose = box(0.21, 0.16, 0.1, mat(DARKF)); nose.position.set(0, -0.1, -0.82); head.add(nose);
+  const blaze = box(0.26, 0.52, 0.06, mat(CREAM)); blaze.position.set(0, 0.16, -0.41); head.add(blaze);
+
+  /* happy open mouth + lolling tongue */
+  const mouth = box(0.36, 0.13, 0.3, mat(DARKF)); mouth.position.set(0, -0.36, -0.56); head.add(mouth);
+  const tongue = new THREE.Group(); tongue.position.set(0, -0.34, -0.62); tongue.rotation.x = 0.55; head.add(tongue);
+  const tongueM = box(0.2, 0.06, 0.38, new THREE.MeshStandardMaterial({ color: TONGUE, roughness: 0.7 }));
+  tongueM.position.z = -0.17; tongue.add(tongueM);
+
+  /* pointy ears with pink inners */
+  const earL = new THREE.Group(); earL.position.set(-0.32, 0.6, 0.06); earL.rotation.y = Math.PI / 4; head.add(earL);
+  earL.add(new THREE.Mesh(new THREE.ConeGeometry(0.23, 0.52, 4), mat(COAT)));
+  const inL = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.3, 4), mat(PINK));
+  inL.position.set(-0.05, -0.05, -0.05); earL.add(inL);
+  const earR = earL.clone(); earR.position.x = 0.32; head.add(earR);
+
+  /* round cartoon eyes with shine */
+  const eyeG = new THREE.SphereGeometry(0.1, 10, 10);
+  const eyeMat = new THREE.MeshBasicMaterial({ color: 0x272c38 });
+  const eyeL = new THREE.Mesh(eyeG, eyeMat); eyeL.position.set(-0.25, 0.08, -0.41);
+  const eyeR = new THREE.Mesh(eyeG, eyeMat); eyeR.position.set(0.25, 0.08, -0.41);
+  const shineG = new THREE.SphereGeometry(0.034, 6, 6);
+  const shineMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+  const shL = new THREE.Mesh(shineG, shineMat); shL.position.set(-0.03, 0.04, -0.075); eyeL.add(shL);
+  const shR = shL.clone(); eyeR.add(shR);
+  head.add(eyeL, eyeR);
+
+  /* fluffy curled tail */
+  const tailG = new THREE.Group(); tailG.position.set(0, 1.58, 0.66); hBody.add(tailG);
+  const tailM = new THREE.Mesh(new THREE.TorusGeometry(0.36, 0.16, 8, 14, Math.PI * 1.35), mat(COAT));
+  tailM.rotation.set(0.35, Math.PI / 2, 0); tailG.add(tailM);
+  const tailTip = new THREE.Mesh(new THREE.SphereGeometry(0.2, 8, 8), mat(CREAM));
+  tailTip.position.set(0, 0.42, -0.24); tailG.add(tailTip);
+
+  /* chunky white puppy legs */
+  function makeLeg(x, z){
+    const g = new THREE.Group(); g.position.set(x, 0.75, z);
+    const upper = box(0.27, 0.72, 0.3, mat(CREAM)); upper.position.y = -0.28; g.add(upper);
+    const paw = box(0.33, 0.18, 0.4, mat(CREAM)); paw.position.set(0, -0.62, -0.06); g.add(paw);
+    hBody.add(g); return g;
+  }
+  const legFL = makeLeg(-0.32, -0.5), legFR = makeLeg(0.32, -0.5);
+  const legBL = makeLeg(-0.32,  0.55), legBR = makeLeg(0.32,  0.55);
+
+  husky.position.set(-2.15, 0, 0);
+  scene.add(husky);
+
+  /* ---------------- pose system (like the reference sheet) ---------------- */
+  /* bx/bz: body pitch/roll · by/bzp: body lift/shift · fl..br: leg swing · hx: head pitch · fold: hind-leg fold */
+  const POSES = {
+    stand:   { bx: 0,     bz: 0,    by: 0,     bzp: 0,     fl: 0,     fr: 0,     bl: 0,     br: 0,     hx: 0,     fold: 1    },
+    sit:     { bx: -0.62, bz: 0,    by: 0.02,  bzp: 0.2,   fl: 0.62,  fr: 0.62,  bl: -1.2,  br: -1.2,  hx: 0.38,  fold: 0.55 },
+    bow:     { bx: 0.5,   bz: 0,    by: -0.14, bzp: -0.12, fl: -1.15, fr: -1.15, bl: -0.5,  br: -0.5,  hx: -0.42, fold: 1    },
+    scratch: { bx: -0.62, bz: 0.1,  by: 0.02,  bzp: 0.2,   fl: 0.62,  fr: 0.62,  bl: -1.2,  br: -0.2,  hx: 0.18,  fold: 0.55 },
+    roll:    { bx: -0.12, bz: 2.75, by: 0.3,   bzp: 0,     fl: 0.9,   fr: 0.55,  bl: 0.85,  br: 0.5,   hx: 0.3,   fold: 1    }
+  };
+  const IDLE_POSES = ['sit', 'bow', 'scratch', 'roll', 'sit'];
+  let poseName = 'stand';
+  const cur = Object.assign({}, POSES.stand);
+  let idleTimer = 0, holdTimer = 0, nextIdleAt = 3.5;
+
+  const blob = new THREE.Mesh(new THREE.CircleGeometry(1.15, 22),
+    new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false, opacity: 0.55 }));
+  blob.rotation.x = -Math.PI / 2; blob.position.y = 0.03;
+  scene.add(blob);
+
+  /* ---------------- scroll / motion state ---------------- */
+  let targetZ = 0, smoothZ = 0, runAmt = 0, gait = 0;
+  let yaw = 0, targetYaw = 0;
+  let jumpV = 0, jumpY = 0;
+  const mouse = { x: 0, y: 0 };
+
+  function scrollProgress(){
+    const max = document.documentElement.scrollHeight - innerHeight;
+    return max > 0 ? Math.min(1, Math.max(0, scrollY / max)) : 0;
+  }
+  function onScroll(){
+    const prev = targetZ;
+    targetZ = -scrollProgress() * PATH;
+    if(targetZ < prev - 0.001) targetYaw = 0;            /* heading into the world */
+    else if(targetZ > prev + 0.001) targetYaw = Math.PI; /* heading back           */
+    if(reduced) requestRender();
+  }
+  addEventListener('scroll', onScroll, { passive: true });
+
+  addEventListener('pointermove', function(e){
+    mouse.x = (e.clientX / innerWidth) * 2 - 1;
+    mouse.y = (e.clientY / innerHeight) * 2 - 1;
+  }, { passive: true });
+
+  /* ---------------- boop ---------------- */
+  const raycaster = new THREE.Raycaster();
+  const woofEl = document.getElementById('woof');
+  const hintEl = document.getElementById('huskyHint');
+  const woofs = ['woof! ✦', 'aroo~', 'boop received', 'he\u2019s great, hire him 🐾'];
+  let woofTimer = null, hintShown = false;
+
+  setTimeout(function(){ if(!hintShown){ hintEl.classList.add('show'); if(reduced) requestRender(); setTimeout(function(){ hintEl.classList.remove('show'); }, 4500); } }, 2200);
+
+  addEventListener('pointerdown', function(e){
+    if(e.target.closest('a, button, .card, nav')) return;
+    raycaster.setFromCamera(new THREE.Vector2(
+      (e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1), camera);
+    if(raycaster.intersectObject(husky, true).length){
+      hintShown = true; hintEl.classList.remove('show');
+      woofEl.textContent = woofs[Math.floor(Math.random() * woofs.length)];
+      woofEl.classList.add('show');
+      clearTimeout(woofTimer);
+      woofTimer = setTimeout(function(){ woofEl.classList.remove('show'); }, 1400);
+      poseName = 'stand'; idleTimer = 0; nextIdleAt = 4 + Math.random() * 3;
+      if(jumpY < 0.05) jumpV = 5.2;
+      earL.rotation.z = 0.5; earR.rotation.z = -0.5;
+      if(reduced) requestRender();
+    }
+  });
+
+  const headWorld = new THREE.Vector3();
+  function pinBubble(el){
+    head.getWorldPosition(headWorld);
+    headWorld.y += 0.55;
+    const v = headWorld.clone().project(camera);
+    el.style.left = ((v.x * 0.5 + 0.5) * innerWidth) + 'px';
+    el.style.top  = ((-v.y * 0.5 + 0.5) * innerHeight) + 'px';
+  }
+
+  /* ---------------- resize ---------------- */
+  function onResize(){
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+    placeLandmarks();
+    if(reduced) requestRender();
+  }
+  addEventListener('resize', onResize);
+
+  /* ---------------- main loop ---------------- */
+  const clock = new THREE.Clock();
+  let blinkT = 0;
+
+  function tick(){
+    const dt = Math.min(clock.getDelta(), 0.05);
+    const t = clock.elapsedTime;
+
+    /* motion along the trail */
+    const prevZ = smoothZ;
+    smoothZ += (targetZ - smoothZ) * Math.min(1, dt * 5.5);
+    const dz = prevZ - smoothZ;
+    const speed = Math.abs(dz) / Math.max(dt, 0.0001);
+    runAmt += ((speed > 0.15 ? Math.min(1, speed / 7) : 0) - runAmt) * Math.min(1, dt * 8);
+
+    husky.position.z = smoothZ;
+    yaw += (targetYaw - yaw) * Math.min(1, dt * 6);
+    husky.rotation.y = yaw;
+
+    /* idle behavior scheduler — sit, play-bow, scratch, roll */
+    if(runAmt < 0.06 && jumpY <= 0 && jumpV === 0){
+      idleTimer += dt;
+      if(poseName === 'stand' && idleTimer > nextIdleAt){
+        poseName = IDLE_POSES[Math.floor(Math.random() * IDLE_POSES.length)];
+        holdTimer = 2.6 + Math.random() * 2.2;
+      } else if(poseName !== 'stand'){
+        holdTimer -= dt;
+        if(holdTimer <= 0){ poseName = 'stand'; idleTimer = 0; nextIdleAt = 2.5 + Math.random() * 3.5; }
+      }
+    } else if(poseName !== 'stand'){
+      poseName = 'stand'; idleTimer = 0;
+    } else {
+      idleTimer = 0;
+    }
+
+    /* blend toward the current pose */
+    const tgt = POSES[poseName];
+    for(const k in cur) cur[k] += (tgt[k] - cur[k]) * Math.min(1, dt * 4.5);
+
+    /* gait (running) layered on top of pose */
+    gait += dt * (5 + 17 * runAmt);
+    const amp = 0.85 * runAmt;
+    legFL.rotation.x = Math.sin(gait) * amp + cur.fl;
+    legBR.rotation.x = Math.sin(gait) * amp + cur.br;
+    legFR.rotation.x = Math.sin(gait + Math.PI) * amp + cur.fr;
+    legBL.rotation.x = Math.sin(gait + Math.PI) * amp + cur.bl;
+    legBL.scale.y = legBR.scale.y = cur.fold;
+
+    /* pose micro-animations */
+    if(poseName === 'scratch'){
+      legBR.rotation.x = -0.35 + Math.sin(t * 22) * 0.55;      /* skritch skritch */
+      head.rotation.z = 0.3 + Math.sin(t * 22) * 0.05;
+      earR.rotation.z = -0.35;
+    } else if(poseName === 'roll'){
+      legFL.rotation.x += Math.sin(t * 7) * 0.3;                /* paws in the air */
+      legFR.rotation.x += Math.sin(t * 7 + 1.4) * 0.3;
+      legBL.rotation.x += Math.sin(t * 7 + 0.7) * 0.3;
+      legBR.rotation.x += Math.sin(t * 7 + 2.1) * 0.3;
+      head.rotation.z = Math.sin(t * 1.4) * 0.18;
+    } else if(poseName === 'sit'){
+      head.rotation.z = Math.sin(t * 0.9) * 0.12;               /* curious head tilt */
+    } else if(poseName === 'bow'){
+      hBody.rotation.z = cur.bz + Math.sin(t * 10) * 0.045;     /* butt wiggle */
+      head.rotation.z = Math.sin(t * 3) * 0.08;
+    } else {
+      head.rotation.z += (Math.sin(t * 0.7) * 0.05 * (1 - runAmt) - head.rotation.z) * Math.min(1, dt * 5);
+    }
+
+    /* jump physics */
+    if(jumpY > 0 || jumpV !== 0){
+      jumpV -= 22 * dt; jumpY += jumpV * dt;
+      if(jumpY <= 0){ jumpY = 0; jumpV = 0; }
+    }
+    hBody.position.y = jumpY + Math.abs(Math.sin(gait)) * 0.09 * runAmt + cur.by;
+    hBody.position.z = cur.bzp;
+    hBody.rotation.x = cur.bx;
+    if(poseName !== 'bow') hBody.rotation.z = cur.bz;
+    torso.scale.y = 1 + Math.sin(t * 1.6) * 0.015 * (1 - runAmt);
+
+    /* tail: slow content wag -> helicopter when running, bowing, or booped */
+    const wagSpeed = 2.2 + 10 * runAmt + (poseName === 'bow' ? 11 : 0);
+    const wagAmp = 0.2 + 0.3 * runAmt + (poseName === 'bow' ? 0.35 : 0) + (poseName === 'sit' ? 0.14 : 0);
+    tailG.rotation.z = Math.sin(t * wagSpeed + gait * 0.5) * wagAmp;
+
+    /* tongue: always a little out, more when excited */
+    tongue.rotation.x = 0.5 + runAmt * 0.3 + (poseName === 'bow' ? 0.25 : 0) + Math.sin(gait) * 0.07 * runAmt;
+
+    head.rotation.x = -0.1 * runAmt + cur.hx;
+    earL.rotation.z += (0 - earL.rotation.z) * Math.min(1, dt * 4);
+    if(poseName !== 'scratch') earR.rotation.z += (0 - earR.rotation.z) * Math.min(1, dt * 4);
+
+    /* blink */
+    blinkT -= dt;
+    if(blinkT <= 0){ blinkT = 3 + Math.random() * 3; eyeL.scale.y = eyeR.scale.y = 0.12;
+      setTimeout(function(){ eyeL.scale.y = eyeR.scale.y = 1; }, 130); }
+
+    blob.position.x = husky.position.x;
+    blob.position.z = smoothZ;
+    blob.scale.setScalar(1 - Math.min(0.5, jumpY * 0.35) + (poseName === 'roll' ? 0.25 : 0));
+
+    /* camera */
+    camera.position.x = husky.position.x + 3.6 + mouse.x * 0.7;
+    camera.position.y = 2.95 + mouse.y * -0.4;
+    camera.position.z = smoothZ + 7.4;
+    camera.lookAt(husky.position.x + 0.5, 1.15, smoothZ - 3.6);
+
+    /* sky + snow follow */
+    skyGroup.position.z = smoothZ;
+    snowGroup.position.z = smoothZ;
+    balloon.position.y = 17 + Math.sin(t * 0.5) * 1.4;
+    balloon.rotation.z = Math.sin(t * 0.4) * 0.06;
+
+    /* snowfall */
+    const sp = snowGeo.attributes.position;
+    for(let i = 0; i < SNOW_N; i++){
+      let y = sp.getY(i) - snowVel[i*2] * dt;
+      let x = sp.getX(i) + Math.sin(t * 0.9 + snowVel[i*2+1]) * dt * 0.7;
+      if(y < 0){ y = 20 + Math.random() * 3; x = (Math.random() - 0.5) * 56; }
+      sp.setY(i, y); sp.setX(i, x);
+    }
+    sp.needsUpdate = true;
+
+    /* aurora + stars + fire */
+    auroraUniforms.forEach(function(u, i){ u.value = t * (0.5 + i * 0.13) + i * 2.1; });
+    starsB.opacity = 0.55 + 0.35 * Math.sin(t * 1.3);
+    if(flameA){
+      flameA.scale.set(1 + Math.sin(t * 11) * 0.12, 1 + Math.sin(t * 9) * 0.2, 1 + Math.cos(t * 10) * 0.12);
+      flameB.scale.copy(flameA.scale);
+      fireLight.intensity = 1.4 + Math.sin(t * 13) * 0.35 + Math.sin(t * 5.1) * 0.15;
+    }
+
+    if(woofEl.classList.contains('show')) pinBubble(woofEl);
+    if(hintEl.classList.contains('show')) pinBubble(hintEl);
+
+    renderer.render(scene, camera);
+  }
+
+  let needsRender = true;
+  function requestRender(){ needsRender = true; }
+
+  function loop(){
+    requestAnimationFrame(loop);
+    tick();
+  }
+  function loopReduced(){
+    requestAnimationFrame(loopReduced);
+    if(needsRender){ needsRender = false; tick(); }
+  }
+
+  onScroll();
+  placeLandmarks();
+  setTimeout(placeLandmarks, 600);       /* after fonts settle */
+  window.addEventListener('load', placeLandmarks);
+
+  if(reduced){ loopReduced(); } else { loop(); }
+
+  /* ---------------- scroll reveals ---------------- */
+  const items = document.querySelectorAll('.rv');
+  if(!('IntersectionObserver' in window)){
+    items.forEach(function(el){ el.classList.add('in'); });
+  } else {
+    const io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+      });
+    }, { threshold: 0.12 });
+    items.forEach(function(el){ io.observe(el); });
+  }
+})();
+</script>
+</body>
+</html>
